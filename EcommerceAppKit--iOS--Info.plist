@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_ml4v0vCuDl55jhUC5KoaOcllsAfFPaY9</string>
+		<key>test</key>
+		<string>key_test_gf7D8tEvzm39hoLD2IESFdaetvbFPvkb</string>
+	</dict>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>57d8q.app.link</string>
+		<string>57d8q-alternate.app.link</string>
+	</array>
+	<key>ATSApplicationFontsPath</key>
+	<string></string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.anishsomani.ecommercekavapp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kavecommerceapp</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Raleway-SemiBold.ttf</string>
+		<string>Raleway-Regular.ttf</string>
+		<string>Raleway-Bold.ttf</string>
+	</array>
+</dict>
+</plist>
