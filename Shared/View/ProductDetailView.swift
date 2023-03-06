@@ -14,6 +14,9 @@ struct ProductDetailView: View {
     // For Matched Geometry Effect...
     var animation: Namespace.ID
     
+    internal var buo = BranchUniversalObject()
+    internal var lp = BranchLinkProperties()
+    
     // Shared Data Model...
     @EnvironmentObject var sharedData: SharedDataModel
     
@@ -92,14 +95,14 @@ struct ProductDetailView: View {
                         .foregroundColor(.gray)
                     
                     Button {
-                        
+                        didTapShareDeepLink()
                     } label: {
                         
                         // Since we need image at right...
                         Label {
                             Image(systemName: "arrow.right")
                         } icon: {
-                            Text("Full description")
+                            Text("Share this product")
                         }
                         .font(.custom(customFont, size: 15).bold())
                         .foregroundColor(Color("Purple"))
@@ -121,7 +124,7 @@ struct ProductDetailView: View {
                     // Add button...
                     Button {
                         addToCart()
-                        BranchEventAddToCart()
+                        branchEventAddToCart()
                     } label: {
                         Text("\(isAddedToCart() ? "added" : "add") to basket")
                             .font(.custom(customFont, size: 20).bold())
@@ -194,23 +197,21 @@ struct ProductDetailView: View {
             sharedData.cartProducts.append(product)
         }
     }
-    func BranchEventAddToCart(){
-        
+    
+    // Branch Track Event - Add To Cart
+    func branchEventAddToCart(){
+        // Create a BranchUniversalObject with your content data:
         let branchUniversalObject = BranchUniversalObject.init()
-        
+
         // ...add data to the branchUniversalObject as needed...
-        branchUniversalObject.canonicalIdentifier = "item/12345"
-        branchUniversalObject.canonicalUrl        = "https://branch.io/item/12345"
-        branchUniversalObject.title               = "My Item Title"
+        branchUniversalObject.title               = product.title
 
         branchUniversalObject.contentMetadata.contentSchema     = .commerceProduct
         branchUniversalObject.contentMetadata.quantity          = 1
+        branchUniversalObject.contentMetadata.price             = product.sellingPrice
         branchUniversalObject.contentMetadata.currency          = .USD
         branchUniversalObject.contentMetadata.productName       = product.title
-        branchUniversalObject.contentMetadata.productBrand      = "my_prod_Brand1"
-        branchUniversalObject.contentMetadata.productCategory   = .apparel
-        branchUniversalObject.contentMetadata.productVariant    = "XL"
-
+        branchUniversalObject.contentMetadata.productVariant    = product.subtitle
 
         // Create a BranchEvent:
         let event = BranchEvent.standardEvent(.addToCart)
@@ -219,10 +220,49 @@ struct ProductDetailView: View {
         event.contentItems     = [ branchUniversalObject ]
 
         // Add relevant event data:
-        event.alias            = "my custom alias"
+        event.alias            = "my custom alias anish"
         event.currency         = .USD
+        event.eventDescription = "Event_description anish"
         event.logEvent() // Log the event.
     }
+
+    func didTapShareDeepLink() {
+        // Set BUO (Branch Universal Object) Properties
+        buo.title = product.title
+        buo.contentDescription = product.subtitle
+        buo.imageUrl = "https://branch.io/img/logo-dark.svg"
+        buo.publiclyIndex = true
+        buo.locallyIndex = true
+        buo.canonicalUrl = "https://www.apple.com/imacpurple"
+        
+        // Set Link Properties
+
+        lp.channel = "In-app"
+        lp.feature = "sharing"
+        lp.campaign = "messaging"
+        lp.addControlParam("$desktop_url", withValue: "https://help.branch.io/")
+        lp.addControlParam("$ios_url", withValue: "https://help.branch.io/developers-hub/docs/ios-sdk-overview")
+        lp.addControlParam("$android_url", withValue: "https://help.branch.io/developers-hub/docs/android-sdk-overview")
+        lp.addControlParam("$canonical_url", withValue: "https://www.apple.com/imacpurple")
+        
+        
+        
+        // Call Share Sheet
+        buo.showShareSheet(with: lp, andShareText: "Check out this Product", from: UIApplication.shared.windows.first?.rootViewController) { (string, bool, error) in
+            guard error == nil else { return }
+            // String = Sharing Method (Messages || CopyToPasteboard || Mail || etc)
+            // Bool = Share Completed/Not Completed
+            // Error = Sharing Error
+            // String = Sharing Method (Messages || CopyToPasteboard || Mail || etc)
+            // Bool = Share Completed/Not Completed
+            // Error = Sharing Error
+            if bool {
+                // Share Sheet sent
+                print("Share Sheet Completed")
+            }
+        }
+    }
+
 }
 
 struct ProductDetailView_Previews: PreviewProvider {

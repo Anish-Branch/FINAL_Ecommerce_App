@@ -91,7 +91,23 @@ struct MainPage: View {
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
                 }
             }
-        )
+        ).onAppear{
+            NotificationCenter.default.addObserver(forName: Notification.Name("HANDLEDEEPLINK"), object: nil, queue: nil) { notification in
+                guard let userInfo = notification.userInfo as? Dictionary<String, Any> else {return}
+               
+                if let productIDURL = userInfo["product_id"] as? String {
+                    let productID = productIDURL.replacingOccurrences(of: "https://www.apple.com/", with: "")
+                    print("UserID = \(productID)")
+                    let homeViewModel = HomeViewModel()
+                   let filteredProducts =  homeViewModel.products.filter {$0.productId == productID}
+                    print("filter product == \(filteredProducts)")
+                    if filteredProducts.count != 0 {
+                        sharedData.detailProduct = filteredProducts[0]
+                        sharedData.showDetailProduct = true
+                    }
+                }
+            }
+        }
     }
 }
 

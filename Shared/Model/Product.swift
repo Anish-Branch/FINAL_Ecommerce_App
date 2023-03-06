@@ -17,6 +17,8 @@ struct Product: Identifiable,Hashable {
     var price: String
     var productImage: String = ""
     var quantity: Int = 1
+    var productId: String = ""
+    var sellingPrice: NSDecimalNumber = 1.00
 }
 
 // Product Types...

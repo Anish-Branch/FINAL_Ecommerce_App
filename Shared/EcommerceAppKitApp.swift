@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
+        //Branch.getInstance().validateSDKIntegration()
         Branch.getInstance().enableLogging()
         
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
@@ -33,27 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             // Check for a "productId" parameter and navigate to the corresponding view
             if let productId = params?["$canonical_url"] as? String {
-                let productView = ProductView(productId: productId)
-                let contentView = ContentView()
-                    .environmentObject(productView)
-                // navigate to the product view
-                DispatchQueue.main.async {
-                    UIApplication.shared.windows.first?.rootViewController?.dismiss(animated: false, completion: nil)
-                    UIApplication.shared.windows.first?.rootViewController = UIHostingController(rootView: contentView)
-                }
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.4, execute:{
+                    NotificationCenter.default.post(name: Notification.Name("HANDLEDEEPLINK"), object: nil, userInfo: ["product_id": productId])
+                })
             }
         }
-        
         return true
     }
-}
-
-class ProductView: ObservableObject {
-    let productId: String
-    
-    init(productId: String) {
-        self.productId = productId
-    }
-    
-    // Add code to display the product with the given ID
 }

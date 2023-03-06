@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import BranchSDK
 
 struct ProfilePage: View {
+    @State var isOn = false // 1
     var body: some View {
         
         NavigationView{
@@ -96,6 +98,17 @@ struct ProfilePage: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .background(Color("HomeBG").ignoresSafeArea())
                     }
+                    
+                    Toggle(isOn: $isOn, label: {
+                             Label("Disable User Tracking", systemImage: "hand.raised")
+                         })
+                             .toggleStyle(SwitchToggleStyle())
+                             .foregroundColor(.black)
+                             .padding()
+                             .onChange(of: isOn) { newValue in
+                                 didTapToggleUserTracking()
+                                 print("Toggle value changed to \(newValue)")
+                             }
                 }
                 .padding(.horizontal,22)
                 .padding(.vertical,20)
@@ -139,6 +152,18 @@ struct ProfilePage: View {
             .padding(.horizontal)
             .padding(.top,10)
         }
+    }
+}
+
+func didTapToggleUserTracking() {
+    // Disable Tracking -> Deinitializes Branch Session
+    switch Branch.trackingDisabled() {
+    case false:
+        Branch.setTrackingDisabled(true)
+        print("Tracking Disabled")
+    case true:
+        Branch.setTrackingDisabled(false)
+        print("Tracking Enabled")
     }
 }
 
